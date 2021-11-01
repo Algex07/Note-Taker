@@ -3,6 +3,7 @@ const path = require('path');
 const db = require("./db/db.json");
 const { v4: uuidv4 } = require('uuid');
 const fs = require("fs");
+const { text } = require('express');
 
 
 const PORT = process.env.port || 3001;
@@ -53,6 +54,24 @@ app.post("/api/notes", (req, res) => {
     })
     res.sendFile(path.join(__dirname, "./db/db.json"))
 })
+
+app.delete("/api/notes/:id", (req, res) => {
+    console.log("were in the backend delete route!")
+    let textId = req.params.id;
+
+    let noteList = JSON.parse(fs.readFileSync("./db/db.json", "utf8"))
+
+    noteList = noteList.filter(thisNote =>{
+        return thisNote.id !== textId;
+    })
+
+    console.log("NOTE LIST", noteList)
+    console.log("textID", textId)
+
+    fs.writeFileSync('./db/db.json', JSON.stringify(noteList))
+    res.json(noteList)
+
+});
 
 
 
